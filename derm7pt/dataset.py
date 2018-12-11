@@ -1,9 +1,14 @@
+import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import keras
+from keras.preprocessing.image import load_img
 from derm7pt.utils import strings2numeric
+from derm7pt.kerasutils import crop_resize_img
 
 
-class ArgenzianoDataset(object):
+class Derm7PtDataset(object):
     # 'names': the name of the tag associated with the image.
     # 'abbrevs': a unique abbreviation. Used as the key to link other DataFrames.
     # 'colnames': the name of the column in the CSV that corresponds to this tag.
@@ -102,7 +107,7 @@ class ArgenzianoDataset(object):
     ])
 
     def __init__(self, dir_images, metadata_df, train_indexes, valid_indexes, test_indexes, crop_amount=25):
-        """The meta-data for the Argenziano dataset.
+        """The meta-data for the Derm7Pt dataset.
 
         Args:
             dir_images: A string indicating the root directory of the images.
@@ -166,6 +171,10 @@ class ArgenzianoDataset(object):
 
         return tag
 
+    def get_tag_name(self, abbrev):
+        tag = self.get_tag_by_abbrev(abbrev)
+        return tag.names.iloc[0]
+
     def get_label_names(self, abbrev, ignore_sub_names=False):
         """Return the names for all the labels for a given category abbrev."""
         lab = self.get_label_by_abbrev(abbrev)
@@ -184,6 +193,10 @@ class ArgenzianoDataset(object):
         tag = self.get_tag_by_abbrev(abbrev)
         lab = getattr(self, tag.colnames.values[0])
         return lab
+
+    def get_label_abbrevs(self, abbrev):
+        lab = self.get_label_by_abbrev(abbrev)
+        return lab.abbrevs
 
     def get_label_nums(self, abbrev):
         lab = self.get_label_by_abbrev(abbrev)
@@ -218,8 +231,239 @@ class ArgenzianoDataset(object):
             if var_name not in self.df.columns:
                 raise ValueError('Error: the variable name `%s` does not link to a column name.' % str(var_name))
 
+    def n_samples(self):
+        """Number of samples/lesions in the dataset."""
+        return len(self.df)
 
-class ArgenzianoDatasetGroupInfrequent(ArgenzianoDataset):
+    def dataset_stats(self):
+
+        n_train = len(self.train)
+        n_test = len(self.test)
+        n_valid = len(self.valid)
+
+        # stats = {'n_train': n_train, 'n_valid': n_valid, 'n_test': n_test}
+
+        print('Number of cases: ' + str(self.n_samples()))
+        print('Number of cases to train: ' + str(n_train))
+        print('Number of cases to validate: ' + str(n_valid))
+        print('Number of cases to test: ' + str(n_test))
+
+        assert n_train + n_test + n_valid == self.n_samples(), \
+            "The train+test+valid cases do not equal the total cases!"
+
+    def get_data_type(self, data_type):
+        if data_type == 'all':
+            df = self.df
+        elif data_type == 'train':
+            df = self.train
+        elif data_type == 'valid':
+            df = self.valid
+        elif data_type == 'test':
+            df = self.test
+        else:
+            raise ValueError('Error: data_type: `' + str(data_type) + '` unknown option.')
+
+        return df
+
+    def get_tag_abbrevs(self):
+        """Return the abbreviations for all the tags."""
+        return self.tags.abbrevs
+
+    def labels2hot(self, labels, abbrev='DIAG'):
+        """
+        Convert the labels to 1-hot encoding.
+
+        Args:
+            labels: a list or array of numeric labels, e.g., labels=[1,0,1].
+            abbrev:
+
+        Returns: The labels one-hot-encoded.
+
+        """
+        nb_classes = len(self.get_label_nums(abbrev))
+        one_hot_labs = keras.utils.np_utils.to_categorical(labels, nb_classes)
+        return one_hot_labs
+
+    def get_labels(self, data_type='all', one_hot=False):
+        """
+        Return all the numeric class labels.
+
+        Args:
+            data_type:
+            one_hot: Boolean, where if `True`, then encode the labels as 1-hot encoding.
+
+        Returns: a dictionary of all the class tags.
+
+        """
+
+        df = self._get_data_frame(data_type)
+        Y = {}
+
+        for abbrev in self.get_tag_abbrevs():
+            labels = df[self.get_column_name_numeric(abbrev)]
+            if one_hot:
+                Y[abbrev] = self.labels2hot(labels=labels, abbrev=abbrev)
+            else:
+                Y[abbrev] = labels
+
+        return Y
+
+    def get_label_names_abbrev(self, abbrev):
+        abbrevs = self.get_label_abbrevs(abbrev)
+        full_names = self.get_label_names(abbrev, ignore_sub_names=True)
+
+        names_abbrev = []
+        for abbrev, name in zip(abbrevs, full_names):
+            names_abbrev.append(name + ' (' + abbrev + ')')
+
+        return names_abbrev
+
+    def _get_data_frame(self, data_type='all'):
+        if data_type == 'all':
+            df = self.df
+        elif data_type == 'train':
+            df = self.train
+        elif data_type == 'valid':
+            df = self.valid
+        elif data_type == 'test':
+            df = self.test
+        else:
+            raise ValueError('Error: data_type: `' + str(data_type) + '` unknown option.')
+
+        return df
+
+    def get_img_paths(self, data_type='all', img_type='derm'):
+        """
+        Return the paths to the images.
+        Args:
+            data_type: must be one of: 'all', 'train', 'valid', or 'test'
+            img_type: must be one of: 'derm', or 'clinic'
+
+        Returns:
+            A list of the full paths to each image.
+
+        """
+        df = self._get_data_frame(data_type)
+
+        if img_type == 'derm':
+            img_names = df.derm
+        elif img_type == 'clinic':
+            img_names = df.clinic
+        else:
+            raise ValueError('Error: img_type `' + str(img_type) + '` is an unknown option.')
+
+        return [os.path.join(self.dir_imgs, img_path) for img_path in img_names]
+
+    def _get_image(self, row_index, image_type, crop_amount=None, target_size=None):
+
+        if image_type == 'derm':
+            img_name = self.derm_img_name(row_index)
+        elif image_type == 'clinic':
+            img_name = self.clinic_img_name(row_index)
+        else:
+            raise ValueError("Unknown `image_type`.")
+
+        if crop_amount is None:
+            crop_amount = self.crop_amount
+
+        # Must be >= 0.
+        assert crop_amount >= 0
+
+        if target_size is None:
+            img = np.asarray(load_img(img_name))
+
+            # Make sure there are only 3 dimensions in the color channel.
+            img = img[:, :, :3]
+
+            # Some images have a surrounding black border, so remove `crop_amount` pixels around the entire image.
+            if crop_amount > 0:
+                img = img[crop_amount:-crop_amount, crop_amount:-crop_amount, :]
+        else:
+            img = crop_resize_img(img_name, target_size=target_size, crop_amount=crop_amount)
+            img = np.uint8(img)
+
+        return img
+
+    def derm_img_name(self, row_index):
+        """Returns the path and name of the image in the `idx` row of the meta-data.
+
+        Args:
+            row_index: An integer that specifies the index of the row within the meta-data.
+
+        Returns:
+            A string that represents the path and filename to the image.
+        """
+        return os.path.join(self.dir_imgs, str(self.df.iloc[row_index][self.derm_column]))
+
+    def clinic_img_name(self, idx):
+        return os.path.join(self.dir_imgs, str(self.df.iloc[idx][self.clinic_column]))
+
+    def derm_image(self, row_index, crop_amount=None, target_size=None):
+        """Return the dermoscopic image that corresponds to the given row."""
+        return self._get_image(row_index, 'derm', crop_amount, target_size=target_size)
+
+    def clinic_image(self, row_index, crop_amount=None, target_size=None):
+        """Return the clinical image that corresponds to the given row."""
+        return self._get_image(row_index, 'clinic', crop_amount, target_size=target_size)
+
+    def plot_label_hist(self, data_type='all', abbrev='DIAG', label_type='names_abbrev',
+                        title='data', fontsize=16, xticks=None):
+
+        df = self.get_data_type(data_type)
+        if label_type == 'names_abbrev':
+            labels = self.get_label_names_abbrev(abbrev)
+        elif label_type == 'abbrev':
+            labels = self.get_label_abbrevs(abbrev)
+        else:
+            raise ValueError('Error: unknown option for `label_type`: %s' % str(label_type))
+
+        n_labels = len(labels)
+
+        df[self.get_column_name_numeric(abbrev)].plot.hist(bins=np.arange(0, n_labels + 0.5, 1),
+                                                           orientation='horizontal',
+                                                           align='mid', fontsize=fontsize)
+        if title:
+            # hist_title = data_type + title
+            hist_title = self.get_tag_name(abbrev=abbrev)
+            plt.title(hist_title, fontsize=fontsize)
+
+        plt.yticks(np.arange(0.5, n_labels, 1), labels, fontsize=fontsize)
+        plt.xlabel('Frequency', fontsize=fontsize)
+
+        if xticks is not None:
+            if xticks == 'custom':
+                xticks = plt.xticks()[0]
+                max_xticks = np.max(xticks)
+                if max_xticks > 500:
+                    sep = 200
+                else:
+                    sep = 100
+                plt.xticks(np.arange(0, max_xticks, sep))
+            else:
+                plt.xticks(xticks)
+
+    def plot_tags_hist(self, abbrevs=None, figsize=(44, 12), fontsize=36):
+        if abbrevs is None:
+            abbrevs = self.tags.abbrevs
+
+        if len(abbrevs) <= 4:
+            n_cols = len(abbrevs)
+            n_rows = 1
+        else:
+            n_cols = np.int(np.floor(len(abbrevs) / 2) + (len(abbrevs) % 2))
+            n_rows = 2
+
+        plt.figure(figsize=figsize)
+
+        img_idx = 1
+        for abbrev in abbrevs:
+            plt.subplot(n_rows, n_cols, img_idx)
+            self.plot_label_hist(title=abbrev, data_type='all', abbrev=abbrev, fontsize=fontsize, xticks='custom')
+            img_idx += 1
+            plt.tight_layout(pad=0.2, w_pad=0.5, h_pad=0.8)
+
+
+class Derm7PtDatasetGroupInfrequent(Derm7PtDataset):
     diagnosis = pd.DataFrame([
         {'nums': 0, 'names': 'basal cell carcinoma', 'abbrevs': 'BCC', 'info': 'Common non-melanoma cancer'},
         {'nums': 1,
