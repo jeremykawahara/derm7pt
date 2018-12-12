@@ -55,4 +55,9 @@ python minimal_example.py '/local-scratch/jer/data/argenziano/release_v0'
 This should output a view of the data that is similar to what is [shown in this notebook](https://github.com/jeremykawahara/derm7pt/blob/master/notebooks/minimal_example.ipynb).
 
 # Related Publications
+More information about this data can be found in our publication, and if you use the data or code, please cite our work,
+> J. Kawahara, S. Daneshvar, G. Argenziano, and G. Hamarneh, “Seven-Point Checklist and Skin Lesion Classification using Multi-Task Multi-Modal Neural Nets,” IEEE Journal of Biomedical and Health Informatics, pp. 1–8, 2018. [[pdf]](http://www.cs.sfu.ca/~hamarneh/ecopy/jbhi2018a.pdf) [[doi]](https://doi.org/10.1109/JBHI.2018.2824327)
+
+You can read more about the seven-point checklist here:
+> G. Argenziano, G. Fabbrocini, P. Carli, D. G. Vincenzo, E. Sammarco, and M. Delfino, “Epiluminescence microscopy for the diagnosis of doubtful melanocytic skin lesions. Comparison of the ABCD rule of dermatoscopy and a new 7-point checklist based on pattern analysis,” Arch. Dermatol., vol. 134, no. 12, pp. 1563–1570, 1998.
 
