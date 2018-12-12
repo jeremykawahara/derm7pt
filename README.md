@@ -38,5 +38,21 @@ You can see the output in [this minimal example notebook](https://github.com/jer
 
 You can find a more [comprehensive example here](https://github.com/jeremykawahara/derm7pt/blob/master/notebooks/example.ipynb) that includes an example of how to classify some of the seven-point checklist.
 
+# Installation Instructions
+You can see the dependencies and versions `derm7pt` was tested on [here](https://github.com/jeremykawahara/derm7pt/blob/master/version_check.ipynb).
+
+To use `derm7pt`:
+1. Download the [data](http://derm.cs.sfu.ca) and unzip it to your folder (we will use the folder `/local-scratch/jer/data/argenziano/release_v0` for this example)
+2. Clone this repository
+3. Run the [minimal_example.py](https://github.com/jeremykawahara/derm7pt/blob/master/minimal_example.py). Make sure to change the directory to match your data folder.
+
+Steps #2 and #3 are shown below,
+```
+git clone https://github.com/jeremykawahara/derm7pt.git
+cd derm7pt
+python minimal_example.py '/local-scratch/jer/data/argenziano/release_v0'
+```
+This should output a view of the data that is similar to what is [shown in this notebook](https://github.com/jeremykawahara/derm7pt/blob/master/notebooks/minimal_example.ipynb).
+
 # Related Publications
 
