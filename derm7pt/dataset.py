@@ -122,7 +122,8 @@ class Derm7PtDataset(object):
         self.derm_column = 'derm'
         self.clinic_column = 'clinic'
 
-        self.df = metadata_df
+        # Copy data-frame as is modified by-reference.
+        self.df = metadata_df.copy()
         self.dir_imgs = dir_images
         self.crop_amount = crop_amount
 
