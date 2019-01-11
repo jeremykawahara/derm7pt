@@ -78,3 +78,33 @@ def _test_strings2numeric():
 
 
 _test_strings2numeric()
+
+
+def html_image_src(image_paths, n_columns=4):
+    """Print to screen twitter bootstrap html code for the `image_paths`.
+
+    Args:
+        image_paths: List of strings indicating the image paths.
+        n_columns: Integer indicating the number of columns to divide the image by.
+            Note that twitter bootstrap assumes 12 columns are available.
+            So if you change `n_columns` you likely need to update `col-3` so n_columns * col-x = 12.
+
+    """
+    n_images = len(image_paths)
+    n_rows = int(np.ceil(n_images / n_columns))
+
+    image_src = ''
+    column_count = 0
+    for img_name in image_paths:
+        if (column_count % n_rows) == 0:
+            image_src += '<div class="col-3">\n'
+
+        image_src += '  <img src="' + img_name + '" class="img-thumbnail" alt="' + img_name + '" onclick="window.open(this.src)">\n'
+
+        column_count += 1
+
+        if (column_count % n_rows) == 0:
+            image_src += '</div>\n'
+
+    image_src += '</div>\n'
+    return image_src
