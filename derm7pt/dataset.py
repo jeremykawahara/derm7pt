@@ -408,7 +408,10 @@ class Derm7PtDataset(object):
         return self._get_image(row_index, 'clinic', crop_amount, target_size=target_size)
 
     def plot_label_hist(self, data_type='all', abbrev='DIAG', label_type='names_abbrev',
-                        title='data', fontsize=16, xticks=None):
+                        title='data', fontsize=16, xticks=None, titlefontsize=None):
+
+        if titlefontsize is None:
+            titlefontsize = fontsize
 
         df = self.get_data_type(data_type)
         if label_type == 'names_abbrev':
@@ -426,7 +429,7 @@ class Derm7PtDataset(object):
         if title:
             # hist_title = data_type + title
             hist_title = self.get_tag_name(abbrev=abbrev)
-            plt.title(hist_title, fontsize=fontsize)
+            plt.title(hist_title, fontsize=titlefontsize)
 
         plt.yticks(np.arange(0.5, n_labels, 1), labels, fontsize=fontsize)
         plt.xlabel('Frequency', fontsize=fontsize)
@@ -443,9 +446,12 @@ class Derm7PtDataset(object):
             else:
                 plt.xticks(xticks)
 
-    def plot_tags_hist(self, abbrevs=None, figsize=(44, 12), fontsize=36):
+    def plot_tags_hist(self, abbrevs=None, figsize=(44, 12), fontsize=36, titlefontsize=None):
         if abbrevs is None:
             abbrevs = self.tags.abbrevs
+
+        if titlefontsize is None:
+            titlefontsize=fontsize
 
         if len(abbrevs) <= 4:
             n_cols = len(abbrevs)
@@ -459,7 +465,8 @@ class Derm7PtDataset(object):
         img_idx = 1
         for abbrev in abbrevs:
             plt.subplot(n_rows, n_cols, img_idx)
-            self.plot_label_hist(title=abbrev, data_type='all', abbrev=abbrev, fontsize=fontsize, xticks='custom')
+            self.plot_label_hist(title=abbrev, data_type='all', abbrev=abbrev, fontsize=fontsize,
+                                 xticks='custom', titlefontsize=titlefontsize)
             img_idx += 1
             plt.tight_layout(pad=0.2, w_pad=0.5, h_pad=0.8)
 
