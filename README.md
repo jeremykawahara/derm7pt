@@ -2,7 +2,7 @@
 `derm7pt` preprocess the [Seven-Point Checklist Dermatolgoy Dataset](http://derm.cs.sfu.ca) and converts the data into a more acessible format. 
 
 `derm7pt` is a Python module that serves as a starting point to use the data as described in,
-> J. Kawahara, S. Daneshvar, G. Argenziano, and G. Hamarneh, “Seven-Point Checklist and Skin Lesion Classification using Multi-Task Multi-Modal Neural Nets,” IEEE Journal of Biomedical and Health Informatics, pp. 1–8, 2018. [[pdf]](http://www.cs.sfu.ca/~hamarneh/ecopy/jbhi2018a.pdf) [[doi]](https://doi.org/10.1109/JBHI.2018.2824327)
+> J. Kawahara, S. Daneshvar, G. Argenziano, and G. Hamarneh, “Seven-Point Checklist and Skin Lesion Classification using Multitask Multimodal Neural Nets,” IEEE Journal of Biomedical and Health Informatics, vol. 23, no. 2, pp. 538–546, 2019. [[pdf]](http://www.cs.sfu.ca/~hamarneh/ecopy/jbhi2018a.pdf) [[doi]](https://doi.org/10.1109/JBHI.2018.2824327)
 
 # Download the Data
 http://derm.cs.sfu.ca
@@ -56,7 +56,21 @@ This should output a view of the data that is similar to what is [shown in this 
 
 # Related Publications
 More information about this data can be found in our publication, and if you use the data or code, please cite our work,
-> J. Kawahara, S. Daneshvar, G. Argenziano, and G. Hamarneh, “Seven-Point Checklist and Skin Lesion Classification using Multi-Task Multi-Modal Neural Nets,” IEEE Journal of Biomedical and Health Informatics, pp. 1–8, 2018. [[pdf]](http://www.cs.sfu.ca/~hamarneh/ecopy/jbhi2018a.pdf) [[doi]](https://doi.org/10.1109/JBHI.2018.2824327)
+```
+@article{Kawahara2018-7pt,
+author = {Kawahara, Jeremy and Daneshvar, Sara and Argenziano, Giuseppe and Hamarneh, Ghassan},
+doi = {10.1109/JBHI.2018.2824327},
+issn = {2168-2194},
+journal = {IEEE Journal of Biomedical and Health Informatics},
+month = {mar},
+number = {2},
+pages = {538--546},
+publisher = {IEEE},
+title = {Seven-point checklist and skin lesion classification using multitask multimodal neural nets},
+volume = {23},
+year = {2019}
+}
+```
 
 You can read more about the seven-point checklist here:
 > G. Argenziano, G. Fabbrocini, P. Carli, D. G. Vincenzo, E. Sammarco, and M. Delfino, “Epiluminescence microscopy for the diagnosis of doubtful melanocytic skin lesions. Comparison of the ABCD rule of dermatoscopy and a new 7-point checklist based on pattern analysis,” Arch. Dermatol., vol. 134, no. 12, pp. 1563–1570, 1998.
