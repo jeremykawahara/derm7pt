@@ -1,5 +1,5 @@
 # derm7pt
-`derm7pt` preprocess the [Seven-Point Checklist Dermatolgoy Dataset](http://derm.cs.sfu.ca) and converts the data into a more acessible format. 
+`derm7pt` preprocess the [Seven-Point Checklist Dermatology Dataset](http://derm.cs.sfu.ca) and converts the data into a more acessible format. 
 
 `derm7pt` is a Python module that serves as a starting point to use the data as described in,
 > J. Kawahara, S. Daneshvar, G. Argenziano, and G. Hamarneh, “Seven-Point Checklist and Skin Lesion Classification using Multitask Multimodal Neural Nets,” IEEE Journal of Biomedical and Health Informatics, vol. 23, no. 2, pp. 538–546, 2019. [[pdf]](http://www.cs.sfu.ca/~hamarneh/ecopy/jbhi2018a.pdf) [[doi]](https://doi.org/10.1109/JBHI.2018.2824327)
