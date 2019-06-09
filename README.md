@@ -75,3 +75,11 @@ year = {2019}
 You can read more about the seven-point checklist here:
 > G. Argenziano, G. Fabbrocini, P. Carli, D. G. Vincenzo, E. Sammarco, and M. Delfino, “Epiluminescence microscopy for the diagnosis of doubtful melanocytic skin lesions. Comparison of the ABCD rule of dermatoscopy and a new 7-point checklist based on pattern analysis,” Arch. Dermatol., vol. 134, no. 12, pp. 1563–1570, 1998.
 
+# Clarifying Notes
+
+The following notes are all related to this publication:
+> J. Kawahara, S. Daneshvar, G. Argenziano, and G. Hamarneh, “Seven-Point Checklist and Skin Lesion Classification using Multitask Multimodal Neural Nets,” IEEE Journal of Biomedical and Health Informatics, vol. 23, no. 2, pp. 538–546, 2019. [[pdf]](http://www.cs.sfu.ca/~hamarneh/ecopy/jbhi2018a.pdf) [[doi]](https://doi.org/10.1109/JBHI.2018.2824327)
+
+In `Section B. Mini-Batches Sampled and Weighed by Label` we set `k=1`.
+
+This means the mini-batch has `24k = 24` samples, since there are 24 unique labels. 
