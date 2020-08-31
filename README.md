@@ -1,4 +1,7 @@
 # derm7pt
+
+[![CircleCI](https://circleci.com/gh/jeremykawahara/derm7pt.svg?style=svg&circle-token=d7db3f56ff4a001f02b977dcb9a932ef9331498f)](https://app.circleci.com/pipelines/github/jeremykawahara/derm7pt)
+
 `derm7pt` preprocess the [Seven-Point Checklist Dermatology Dataset](http://derm.cs.sfu.ca) and converts the data into a more acessible format. 
 
 `derm7pt` is a Python module that serves as a starting point to use the data as described in,
