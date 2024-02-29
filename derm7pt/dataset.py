@@ -478,7 +478,7 @@ class Derm7PtDatasetGroupInfrequent(Derm7PtDataset):
          'names': ['nevus', 'blue nevus', 'clark nevus', 'combined nevus', 'congenital nevus', 'dermal nevus',
                    'recurrent nevus', 'reed or spitz nevus'], 'abbrevs': 'NEV'},
         {'nums': 2,
-         'names': ['melanoma', 'melanoma', 'melanoma (in situ)', 'melanoma (less than 0.76 mm)',
+         'names': ['melanoma', 'melanoma (in situ)', 'melanoma (less than 0.76 mm)',
                    'melanoma (0.76 to 1.5 mm)',
                    'melanoma (more than 1.5 mm)', 'melanoma metastasis'], 'abbrevs': 'MEL'},
         {'nums': 3, 'names': ['DF/LT/MLS/MISC', 'dermatofibroma', 'lentigo', 'melanosis',
