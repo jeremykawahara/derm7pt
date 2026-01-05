@@ -134,7 +134,7 @@ class Derm7PtDataset(object):
         self.check_myself()
 
         # Make sure all the indexes are in at least one fold.
-        match_indexes = np.alltrue(np.sort(np.concatenate((train_indexes, valid_indexes, test_indexes)))
+        match_indexes = np.all(np.sort(np.concatenate((train_indexes, valid_indexes, test_indexes)))
                                    == range(len(self.df)))
         if not match_indexes:
             print("Warning! The train/valid/test indexes do not match the total number of samples.")
